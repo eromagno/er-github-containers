@@ -7,7 +7,6 @@ on:
 env:
   CACHE_KEY: node-deps
   MONGODB_DB_NAME: db-keno
-  MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
 jobs:
   test:
     environment: testing
@@ -15,11 +14,21 @@ jobs:
     container: 
       image: node:20
     env:
-      MONGODB_CONNECTION_PROTOCOL: mongodb+srv
-      MONGODB_CLUSTER_ADDRESS: cluster0.uvqbwmo.mongodb.net
-      MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
-      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+      # MONGODB_CONNECTION_PROTOCOL: mongodb+srv
+      MONGODB_CONNECTION_PROTOCOL: mongodb  # defined by the image: mongo db service 
+      # MONGODB_CLUSTER_ADDRESS: cluster0.uvqbwmo.mongodb.net
+      MONGODB_CLUSTER_ADDRESS: mongodb
+      # MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+      # MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+      MONGODB_USERNAME: root       # must be the same as defined for the mongo container
+      MONGODB_PASSWORD: example    # must be the same as defined for the mongo container
       PORT: 8080
+    services:  # add a service - Mongo DB database service
+      mongodb: 
+        image: mongo  # service container for inrenal mongo db database
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root     # dummy credentials
+          MONGO_INITDB_ROOT_PASSWORD: example  # dummy credentials
     steps:
       - name: Get Code
         uses: actions/checkout@v3
